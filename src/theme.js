@@ -1,5 +1,7 @@
 export const theme = {
+  white: "#ffffff",
   black: "#000000",
+  shadowBlack: "rgba(0, 0, 0, 0.8)",
   tgtGold: "#ecca56",
   tgtDarkGold: "#cca016",
   tgtBlue: "#20527F",

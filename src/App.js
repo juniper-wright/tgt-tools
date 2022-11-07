@@ -7,6 +7,11 @@ import Wildshape from './features/wildshape';
 import Randumgeon from './features/randumgeon';
 import NavButton from './components/navButton';
 
+const Container = styled.div`
+  height: 100vh;
+  background: linear-gradient(180deg, ${({ theme }) => theme.tgtBlue} 13.54%, ${({ theme }) => theme.tgtVeryDarkBlue} 100%);
+`;
+
 const Navbar = styled.div`
   height: 60px;
   box-sizing: border-box;
@@ -14,12 +19,30 @@ const Navbar = styled.div`
   background-color: ${({ theme }) => theme.tgtDarkBlue};
   display: flex;
   flex-direction: row;
-  padding: 13px 20px;
+  justify-content: space-between;
+  padding: 0px 20px;
 `;
 
-const Container = styled.div`
-  height: 100vh;
-  background: linear-gradient(180deg, ${({ theme }) => theme.tgtBlue} 13.54%, ${({ theme }) => theme.tgtVeryDarkBlue} 100%);
+const NavButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const HeaderTitle = styled.div`
+  font-size: 40px;
+  line-height: 44px;
+  color: ${({ theme }) => theme.bone};
+  text-shadow: 2px 2px 0px ${({ theme }) => theme.shadowBlack};
+  margin-right: 20px;
+`;
+
+const ProfilePic = styled.div`
+  height: 32px;
+  width: 32px;
+  border-radius: 32px;
+  border: 2px solid ${({ theme }) => theme.black};
+  box-shadow: 2px 2px 0px ${({ theme }) => theme.shadowBlack};
 `;
 
 const ContentContainer = styled.div`
@@ -30,9 +53,15 @@ function App() {
   return (
     <Container>
       <Navbar>
-        <NavButton to="spells" title="Spells" />
-        <NavButton to="wildshape" title="Wild Shape" />
-        <NavButton to="randumgeon" title="Randumgeon" />
+        <NavButtonContainer>
+          <NavButton to="spells" title="Spells" />
+          <NavButton to="wildshape" title="Wild Shape" />
+          <NavButton to="randumgeon" title="Randumgeon" />
+        </NavButtonContainer>
+        <NavButtonContainer>
+          <HeaderTitle>The Gilded Troll</HeaderTitle>
+          <ProfilePic />
+        </NavButtonContainer>
       </Navbar>
       <ContentContainer>
         <Routes>

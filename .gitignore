@@ -1,3 +1,7 @@
+# Proprietary files, without which the site can't work
+spells.json
+beasts.json
+
 # Logs
 logs
 *.log

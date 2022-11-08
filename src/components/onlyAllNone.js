@@ -27,7 +27,9 @@ const StyledLabel = styled.label`
   justify-content: center;
   padding: 0px 8px 0px 10px;
   box-sizing: border-box;
-  box-shadow: ${({ checked }) => checked ? 'inset 2px 2px' : '2px 4px'} 0px ${({ theme }) => theme.shadowBlack}; 
+  &:not(:first-of-type) {
+    box-shadow: ${({ checked }) => checked ? 'inset 2px 2px' : '2px 4px'} 0px ${({ theme }) => theme.shadowBlack}; 
+  }
   background-color: ${({ checked, theme }) => checked ? theme.tgtGold : theme.seaBlue};
   cursor: pointer;
 `;

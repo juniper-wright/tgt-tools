@@ -31,6 +31,12 @@ const NavButtonContainer = styled.div`
   align-items: center;
 `;
 
+const StyledLink = styled.a`
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+`;
+
 const HeaderTitle = styled.div`
   font-size: 40px;
   line-height: 44px;
@@ -45,6 +51,8 @@ const ProfilePic = styled.div`
   border-radius: 32px;
   border: 2px solid ${({ theme }) => theme.black};
   box-shadow: 2px 2px 0px ${({ theme }) => theme.shadowBlack};
+  overflow: hidden;
+  margin-top: 3px;
 `;
 
 const ContentContainer = styled.div`
@@ -61,8 +69,12 @@ function App() {
           <NavButton to="randumgeon" title="Randumgeon" />
         </NavButtonContainer>
         <NavButtonContainer>
-          <HeaderTitle>The Gilded Troll</HeaderTitle>
-          <ProfilePic />
+          <StyledLink href="https://twitch.tv/thegildedtroll" target="_blank" rel="noreferrer">
+            <HeaderTitle>The Gilded Troll</HeaderTitle>
+            <ProfilePic>
+              <img height="32" width="32" src="/tgt-logo.jpg" />
+            </ProfilePic>
+          </StyledLink>
         </NavButtonContainer>
       </Navbar>
       <ContentContainer>

@@ -1,8 +1,11 @@
 import React from 'react';
+import Page from '../components/page';
 
 export const Spells = () => {
   return (
-    <h2>Spells!</h2>
+    <Page>
+      <h2>Spells!</h2>
+    </Page>
   );
 } 
 

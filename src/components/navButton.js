@@ -22,7 +22,7 @@ export const NavButton = ({ to, title }) => {
   const active = useMatch({ path: resolved.pathname, end: true });
 
   return (
-    <StyledLink to={to} active={!!active}>{title}</StyledLink>
+    <StyledLink to={to} active={active}>{title}</StyledLink>
   );
 } 
 

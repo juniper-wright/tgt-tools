@@ -7,6 +7,8 @@ import Wildshape from './features/wildshape';
 import Randumgeon from './features/randumgeon';
 import NavButton from './components/navButton';
 
+import { calculateStrokeTextShadow } from './utils';
+
 const Container = styled.div`
   height: 100vh;
   background: linear-gradient(180deg, ${({ theme }) => theme.tgtBlue} 13.54%, ${({ theme }) => theme.tgtVeryDarkBlue} 100%);
@@ -32,9 +34,9 @@ const NavButtonContainer = styled.div`
 const HeaderTitle = styled.div`
   font-size: 40px;
   line-height: 44px;
-  color: ${({ theme }) => theme.bone};
-  text-shadow: 2px 2px 0px ${({ theme }) => theme.shadowBlack};
   margin-right: 20px;
+  color: ${({ theme }) => theme.bone};
+  text-shadow: ${({ theme }) => calculateStrokeTextShadow({ radius: 2, color: theme.black, shadow: true })};
 `;
 
 const ProfilePic = styled.div`

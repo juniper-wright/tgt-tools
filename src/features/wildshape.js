@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { Table } from 'antd';
 import Page from '../components/page';
 import Checkbox from '../components/checkbox';
 import Select from '../components/select';
@@ -29,7 +28,7 @@ const FilterHeader = styled.div`
   font-size: 24px;
   line-height: 26px;
   color: ${({ theme }) => theme.white};
-  text-shadow: ${({ theme }) => calculateStrokeTextShadow({ radius: 1, color: theme.black, shadow: true })};
+  text-shadow: ${({ theme }) => calculateStrokeTextShadow({ radius: 2, color: theme.black, shadow: true })};
 `;
 
 const FilterInputContainer = styled.div`
@@ -40,53 +39,74 @@ const FilterInputContainer = styled.div`
   }
 `;
 
-const StyledTable = styled(Table).attrs({ border: 0 })`
-  display: flex;
-  flex-direction: row;
+const StyledTable = styled.div`
   border-radius: 2px;
   border: 4px solid ${({ theme }) => theme.black};
   drop-shadow: 4px 4px 0px ${({ theme }) => theme.shadowBlack};
-  thead, tr, th, td {
-    border-width: 0px;
-  }
-  th, td {
-    min-width: 70px;
-  }
-  th:last-of-type {
-    min-width: 0px;
-  }
-  th:first-of-type {
-    min-width: 200px;
-  }
-  thead {
-    background-color: ${({ theme }) => theme.seaBlue};
+  width: 100%;
+  min-width: 1000px;
+  max-width: 1400px;
+  font-size: 18px;
+  line-height: 34px;
+  color: ${({ theme }) => theme.white};
+  div.thead {
     font-size: 24px;
+    color ${({ theme }) => theme.black};
+    background-color: ${({ theme }) => theme.seaBlue};
+    border-bottom: 4px solid ${({ theme }) => theme.black};
+    padding-right: 24px;
+    div.td {
+      cursor: pointer;
+      border-right: 4px solid ${({ theme }) => theme.black};
+      box-sizing: border-box;
+    }
   }
-  tr {
+  div.tr {
     height: 34px;
-    line-height: 34px;
-    td {
-      font-size: 18px;
-      color: ${({ theme }) => theme.white};
-      text-align: center;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+  }
+  div.tbody {
+    max-height: ${() => Math.max(document?.documentElement?.clientHeight || 0, window?.innerHeight || 0) - 269}px;
+    overflow-y: scroll;
+    scrollbar-color: ${({ theme }) => `${theme.tgtDarkBlue} ${theme.seaBlue}`};
+    scrollbar-width: 24px;
+    div.tr {
+      border-right: 4px solid ${({ theme }) => theme.black};
+      &:nth-child(odd) {
+        background-color: ${({ theme }) => theme.tgtDarkBlue};
+      }
+      &:nth-child(even) {
+        background-color: ${({ theme }) => theme.tgtVeryDarkBlue};
+      }
     }
-    &:nth-child(odd) {
-      background-color: ${({ theme }) => theme.tgtDarkBlue};
+
+    ::-webkit-scrollbar {
+      width: 24px;
+      padding: 1px;
+      background: ${({ theme }) => theme.tgtDarkBlue};
     }
-    &:nth-child(even) {
-      background-color: ${({ theme }) => theme.tgtVeryDarkBlue};
+    ::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.seaBlue};
+      border: 1px solid ${({ theme }) => theme.tgtDarkBlue};
+      border-radius: 2px;
+      box-shadow: ${({ theme }) => ['2px 2px', '2px -2px', '-2px 2px', '-2px -2px'].map((p) => `inset ${p} 0px ${theme.black}`).join(',')};
+    }
+    ::-webkit-scrollbar-corner {
+      background: #f00;
     }
   }
 `;
 
-const getAttackCount = (text, record) => {
+const getAttackCount = (record) => {
   let attackCount = _.max(record?.action?.map((action) => {
     const makesAttacksMatch = action?.entries?.[0]?.match(/makes ([a-z]+)( [a-z]+)? attacks/)?.[1];
     if (makesAttacksMatch) {
       return numberWordToNumber(makesAttacksMatch); 
     } else {
       const numberWords = action?.entries?.[0]?.match(/(one|two|three)/);
-      const isAttack = action?.entries?.[0]?.indexOf("one target") !== -1;
+      const isAttack = action?.entries?.[0]?.indexOf("ft., one") !== -1;
       if (numberWords && !isAttack) {
         return _.sum(numberWords.map(numberWordToNumber));
       } else {
@@ -131,13 +151,30 @@ const sizeInitialToWord = (initial) => {
   }
 }
 
-const getModifier = (text, record) => {
+const getModifier = (record) => {
   return _.max(record?.action?.map((action) => action?.entries?.[0]?.match(/@hit ([0-9]{1,2})/)?.[1]));
 };
 
-const getDamagePerHit = (text, record) => {
+const getDamagePerHit = (record) => {
   return _.max(record?.action?.map((action) => action?.entries?.[0]?.match(/{@h}([0-9]{1,2})/)?.[1]));
 };
+
+const columns = [
+  { width: "14%", key: "name", title: "Name", dataIndex: "name" },
+  { width: "8%", key: "size", title: "Size", render: (record) => sizeInitialToWord(record?.size?.[0]) },
+  { width: "7%", key: "cr", title: "CR", dataIndex: "cr" },
+  { width: "7%", key: "hp", title: "HP", dataIndex: ["hp", "average"] },
+  { width: "7%", key: "ac", title: "AC", dataIndex: ["ac", 0, "ac"], render: (record) => record?.ac?.[0]?.ac || record?.ac?.[0] },
+  { width: "7%", key: "survivability", title: "Surv.", render: (record) => ((Math.ceil(record?.hp?.average / 10)) * Math.max(Math.min(((6 + (record?.ac?.[0]?.ac || record?.ac?.[0])) / 20), 0.95), 0.05)).toFixed(2) },
+  { width: "5%", key: "walk", title: "Walk", dataIndex: ["speed", "walk"] },
+  { width: "5%", key: "swim", title: "Swim", dataIndex: ["speed", "swim"] },
+  { width: "5%", key: "fly", title: "Fly", dataIndex: ["speed", "fly"] },
+  { width: "5%", key: "climb", title: "Climb", dataIndex: ["speed", "climb"] },
+  { width: "8%", key: "attacks", title: "Attacks", render: getAttackCount },
+  { width: "8%", key: "modifier", title: "Modifier", render: getModifier },
+  { width: "7%", key: "dph", title: "DPH", render: getDamagePerHit },
+  { width: "7%", key: "dpr", title: "DPR", render: (record) => ((((6 + +getModifier(record)) / 20) * getDamagePerHit(record) * getAttackCount(record)) || 0).toFixed(1) },
+];
 
 export const Wildshape = () => {
   const initialState = {
@@ -157,6 +194,16 @@ export const Wildshape = () => {
   };
 
   const [filters, setFilters] = useState(initialState);
+  const [sortField, setSortField] = useState(columns[0]);
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  const setCreatureSizeFilter = (size, checked) => {
+    let creatureSize = { ...filters.creatureSize, T: checked };
+    if (_.keys(_.pickBy(creatureSize, _.identity)).length === 0) {
+      creatureSize = initialState.creatureSize;
+    }
+    setFilters({ ...filters, creatureSize });
+  }
 
   const filteredBeasts = beasts.filter((beast) => {
     // Filter by CR
@@ -193,12 +240,22 @@ export const Wildshape = () => {
     return true;
   });
 
-  const setCreatureSizeFilter = (size, checked) => {
-    let creatureSize = { ...filters.creatureSize, T: checked };
-    if (_.keys(_.pickBy(creatureSize, _.identity)).length === 0) {
-      creatureSize = initialState.creatureSize;
+  const updateSort = (newSortField) => {
+    setSortDirection(sortField.key === newSortField.key && sortDirection === 'desc' ? 'asc' : 'desc');
+    setSortField(newSortField);
+  }
+
+  const sortIterator = (beast, column) => {
+    switch (column.key) {
+      case 'cr':
+        return +beast.cr || eval(beast.cr);
+      case 'size':
+        return Object.keys(initialState.creatureSize).indexOf(beast?.size?.[0]);
+      case 'name':
+        return _.get(beast, column.dataIndex);
+      default:
+        return Number.parseFloat(column?.render?.(beast) || _.get(beast, column.dataIndex) || 0);
     }
-    setFilters({ ...filters, creatureSize });
   }
 
   return (
@@ -221,12 +278,9 @@ export const Wildshape = () => {
         <Filter>
           <FilterHeader>Creature Size</FilterHeader>
           <FilterInputContainer>
-            <Checkbox sizeFactor={2} contents="T" defaultState={true} onChange={(checked) => setCreatureSizeFilter("T", checked)} />
-            <Checkbox sizeFactor={2} contents="S" defaultState={true} onChange={(checked) => setCreatureSizeFilter("S", checked)} />
-            <Checkbox sizeFactor={2} contents="M" defaultState={true} onChange={(checked) => setCreatureSizeFilter("M", checked)} />
-            <Checkbox sizeFactor={2} contents="L" defaultState={true} onChange={(checked) => setCreatureSizeFilter("L", checked)} />
-            <Checkbox sizeFactor={2} contents="H" defaultState={true} onChange={(checked) => setCreatureSizeFilter("H", checked)} />
-            <Checkbox sizeFactor={2} contents="G" defaultState={true} onChange={(checked) => setCreatureSizeFilter("G", checked)} />
+            {Object.keys(initialState.creatureSize).map((size) => (
+              <Checkbox key={`checkbox-${size}`} sizeFactor={2} contents={size} defaultState={true} onChange={(checked) => setCreatureSizeFilter(size, checked)} />
+            ))}
           </FilterInputContainer>
         </Filter>
       </FilterRow>
@@ -235,28 +289,29 @@ export const Wildshape = () => {
         <OnlyAllNone onChange={(swim) => setFilters({ ...filters, swim })} label="Swim" />
         <OnlyAllNone onChange={(climb) => setFilters({ ...filters, climb })} label="Climb" />
       </FilterRow>
-      <StyledTable
+      <StyledTable>
+        <div className="thead tr">
+          {columns.map((column) => (
+            <div key={`header-${column.key}`} className="td" style={{ width: column.width }} onClick={() => updateSort(column)}>{column.title}</div>
+          ))}
+        </div>
+        <div className="tbody">
+          {_.orderBy(filteredBeasts, (beast) => sortIterator(beast, sortField), sortDirection).map((beast, index) => (
+            <div className="tr" key={`beast-${index}`}>        
+              {columns.map((column) => (
+                <div key={`beast-${index}-${column.key}`} className="td" style={{ width: column.width }}>{column?.render?.(beast) || _.get(beast, column.dataIndex)}</div>
+              ))}
+            </div>
+          ))}
+        </div>
+{/*
         bordered={false}
         scroll={{ y: 600 }}
         dataSource={filteredBeasts}
-        columns={[
-          { width: "14%", key: "name", title: "Name", dataIndex: "name" },
-          { width: "8%", key: "size", title: "Size", render: (text, record) => sizeInitialToWord(record?.size?.[0]) },
-          { width: "7%", key: "cr", title: "CR", dataIndex: "cr" },
-          { width: "7%", key: "hp", title: "HP", dataIndex: ["hp", "average"] },
-          { width: "7%", key: "ac", title: "AC", dataIndex: ["ac", 0, "ac"], render: (text, record) => record?.ac?.[0]?.ac || record?.ac?.[0] },
-          { width: "7%", key: "survivability", title: "Surv.", render: (text, record) => ((Math.ceil(record?.hp?.average / 10)) * Math.max(Math.min(((27 - (record?.ac?.[0]?.ac || record?.ac?.[0])) / 20), 0.95), 0.05)).toFixed(2) },
-          { width: "5%", key: "walk", title: "Walk", dataIndex: ["speed", "walk"] },
-          { width: "5%", key: "swim", title: "Swim", dataIndex: ["speed", "swim"] },
-          { width: "5%", key: "fly", title: "Fly", dataIndex: ["speed", "fly"] },
-          { width: "5%", key: "climb", title: "Climb", dataIndex: ["speed", "climb"] },
-          { width: "8%", key: "attacks", title: "Attacks", render: getAttackCount },
-          { width: "8%", key: "modifier", title: "Modifier", render: getModifier },
-          { width: "7%", key: "dph", title: "DPH", render: getDamagePerHit },
-          { width: "7%", key: "dpr", title: "DPR", render: (text, record) => ((((6 + +getModifier(text, record)) / 20) * getDamagePerHit(text, record) * getAttackCount(text, record)) || 0).toFixed(1) },
-        ]}
         pagination={false}
       />
+*/}
+      </StyledTable>
     </Page>
   );
 } 

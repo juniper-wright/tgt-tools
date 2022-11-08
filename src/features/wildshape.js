@@ -57,6 +57,9 @@ const StyledTable = styled.div`
     padding-right: 24px;
     div.td {
       cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
       border-right: 4px solid ${({ theme }) => theme.black};
       box-sizing: border-box;
     }
@@ -97,6 +100,11 @@ const StyledTable = styled.div`
       background: #f00;
     }
   }
+`;
+
+const ChevronContainer = styled.span`
+  margin-top: ${({ up }) => up ? 8 : -4}px;
+  color: ${({ theme }) => theme.tgtGold};
 `;
 
 const getAttackCount = (record) => {
@@ -292,7 +300,12 @@ export const Wildshape = () => {
       <StyledTable>
         <div className="thead tr">
           {columns.map((column) => (
-            <div key={`header-${column.key}`} className="td" style={{ width: column.width }} onClick={() => updateSort(column)}>{column.title}</div>
+            <div key={`header-${column.key}`} className="td" style={{ width: column.width }} onClick={() => updateSort(column)}>
+              {column.title}
+              {sortField.key === column.key && (
+                <ChevronContainer up={sortDirection === 'asc'}>{sortDirection === 'asc' ? '⌃' : '⌄'}</ChevronContainer>
+              )}
+            </div>
           ))}
         </div>
         <div className="tbody">
@@ -304,13 +317,6 @@ export const Wildshape = () => {
             </div>
           ))}
         </div>
-{/*
-        bordered={false}
-        scroll={{ y: 600 }}
-        dataSource={filteredBeasts}
-        pagination={false}
-      />
-*/}
       </StyledTable>
     </Page>
   );

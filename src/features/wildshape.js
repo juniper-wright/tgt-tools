@@ -212,7 +212,7 @@ export const Wildshape = () => {
 
   const filteredBeasts = beasts.filter((beast) => {
     // Filter by CR
-    const beastCR = beast?.cr || eval(beast?.cr)
+    const beastCR = (parseInt(beast?.cr?.split('/')[0], 10) / parseInt(beast?.cr?.split('/')[1], 10)) || beast?.cr
     if (filters.moon) {
       if (beast.type === "elemental" && filters.level < 10) {
         return false;
@@ -253,7 +253,7 @@ export const Wildshape = () => {
   const sortIterator = (beast, column) => {
     switch (column.key) {
       case 'cr':
-        return +beast.cr || eval(beast.cr);
+        return (parseInt(beast?.cr?.split('/')[0], 10) / parseInt(beast?.cr?.split('/')[1], 10)) || beast?.cr
       case 'size':
         return Object.keys(initialState.creatureSize).indexOf(beast?.size?.[0]);
       case 'name':
@@ -270,8 +270,8 @@ export const Wildshape = () => {
           <FilterHeader>Druid Level</FilterHeader>
           <FilterInputContainer>
             <Select onChange={(e) => setFilters({ ...filters, level: e?.target?.value})}>
-              {new Array(19).fill(null).map((a, i) => {
-                return <option key={`druid-level-${i + 2}`} value={i + 2}>Level {i + 2}</option>
+              {new Array(17).fill(null).map((a, i) => {
+                return <option key={`druid-level-${i + 2}`} value={i + 2}>Level {i + 2}{i === 16 && '+'}</option>
               })}
             </Select>
           </FilterInputContainer>

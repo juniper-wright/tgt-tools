@@ -7,7 +7,7 @@ import Select from '../components/select';
 import OnlyAllNone from '../components/onlyAllNone';
 
 import { calculateStrokeTextShadow } from '../utils';
-import beasts from '../beasts.json';
+import beasts from '../assets/beasts.json';
 import _ from 'lodash';
 
 const FilterRow = styled.div`
@@ -95,9 +95,6 @@ const StyledTable = styled.div`
       border: 1px solid ${({ theme }) => theme.tgtDarkBlue};
       border-radius: 2px;
       box-shadow: ${({ theme }) => ['2px 2px', '2px -2px', '-2px 2px', '-2px -2px'].map((p) => `inset ${p} 0px ${theme.black}`).join(',')};
-    }
-    ::-webkit-scrollbar-corner {
-      background: #f00;
     }
   }
 `;

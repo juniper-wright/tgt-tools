@@ -6,7 +6,6 @@ import _ from 'lodash';
 
 const SpellCardContainer = styled.div`
   margin-top: 10px;
-  width: 100%;
   border: 2px solid ${({ theme }) => theme.black};
   border-radius: 2px;
   padding: 10px;

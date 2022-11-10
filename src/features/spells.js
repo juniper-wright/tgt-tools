@@ -187,7 +187,7 @@ export const Spells = () => {
       const textFilterMatch = spell?.name?.toLowerCase().includes(spellNameSearch.toLowerCase())
       if (!textFilterMatch && spellNameSearch.length) {
         return false;
-      } else if (textFilterMatch) {
+      } else if (textFilterMatch && spellNameSearch.length) {
         // If we searched for a spell, display it. Even if it doesn't match our other filters.
         return true;
       }

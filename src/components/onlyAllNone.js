@@ -49,7 +49,7 @@ export const Checkbox = ({ label, defaultState, onChange }) => {
 
   return (
     <OnlyAllNoneContainer>
-      <StyledLabel style={{ cursor: 'auto' }}>{label}</StyledLabel>
+      <StyledLabel style={{ cursor: 'default' }}>{label}</StyledLabel>
       <StyledLabel htmlFor={`${radioId}-only`} checked={state === true}>Only</StyledLabel>
       <StyledLabel htmlFor={`${radioId}-all`} checked={state === null}>All</StyledLabel>
       <StyledLabel htmlFor={`${radioId}-none`} checked={state === false}>None</StyledLabel>

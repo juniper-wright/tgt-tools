@@ -10,8 +10,10 @@ import NavButton from './components/navButton';
 import { calculateStrokeTextShadow } from './utils';
 
 const Container = styled.div`
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
   background: linear-gradient(180deg, ${({ theme }) => theme.tgtBlue} 13.54%, ${({ theme }) => theme.tgtVeryDarkBlue} 100%);
+  background-attachment: scroll;
 `;
 
 const Navbar = styled.div`

@@ -11,6 +11,7 @@ const CheckboxContainer = styled.label`
   height: ${({ sizeFactor }) => 16 * sizeFactor}px;
   width: ${({ sizeFactor }) => 16 * sizeFactor}px;
   font-size: ${({ sizeFactor }) => 12 * sizeFactor}px;
+  padding: ${({ checked, contents, sizeFactor }) => checked && contents ? `${1 * sizeFactor}px 0px 0px ${1 * sizeFactor}px` : '0px'};
   svg {
     height: ${({ sizeFactor }) => 12 * sizeFactor}px;
     width: ${({ sizeFactor }) => 12 * sizeFactor}px;
@@ -26,7 +27,7 @@ const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
   display: none;
 `
 
-export const Checkbox = ({ sizeFactor = 1, contents, defaultState, onChange }) => {
+export const Checkbox = ({ sizeFactor = 1, contents, defaultState, value = null, onChange, style }) => {
   const [checkboxId] = useState(`checkbox-${Math.random()}`)
   const [state, setState] = useState(defaultState);
 
@@ -35,12 +36,22 @@ export const Checkbox = ({ sizeFactor = 1, contents, defaultState, onChange }) =
     typeof onChange === "function" && onChange(e?.target?.checked);
   }
 
+  const getCheckboxValue = () => {
+    // If value is null, this is an uncontrolled checkbox
+    // If non-null, then the state of the checkbox is being controlled externally
+    if (value !== null) {
+      return !!value;
+    } else {
+      return !!state;
+    }
+  }
+
   return (
     <>
-      <CheckboxContainer htmlFor={checkboxId} checked={!!state} sizeFactor={sizeFactor}>
-        {contents || (state ? <Checkmark /> : '')}
+      <CheckboxContainer htmlFor={checkboxId} checked={getCheckboxValue()} contents={contents} sizeFactor={sizeFactor} style={style}>
+        {contents || (getCheckboxValue() ? <Checkmark /> : '')}
       </CheckboxContainer>
-      <HiddenCheckbox id={checkboxId} checked={!!state} onChange={handleChange} />
+      <HiddenCheckbox id={checkboxId} checked={getCheckboxValue()} onChange={handleChange} />
     </>
   );
 };

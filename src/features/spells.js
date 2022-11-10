@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import Page from '../components/page';
 import Checkbox from '../components/checkbox';
+import SpellCard from '../components/spellCard';
 import OnlyAllNone from '../components/onlyAllNone';
 
 import { ReactComponent as FilterIcon } from '../assets/filter.svg';
@@ -118,7 +119,7 @@ const Option = styled.div`
 `;
 
 const SpellsContainer = styled.div`
-  
+  width: 100%;
 `;
 
 export const Spells = () => {
@@ -131,6 +132,7 @@ export const Spells = () => {
   const [availableSpells, setAvailableSpells] = useState(allSpells);
   const [selectedSpells, setSelectedSpells] = useState([]);
 
+  const [spellNameSearch, setSpellNameSearch] = useState('');
   const [showFilters, setShowFilters] = useState(true);
   const [ritualFilter, setRitualFilter] = useState(null);
 
@@ -148,7 +150,7 @@ export const Spells = () => {
       })
       .flattenDeep()
       .uniq()
-      .filter((spellClass) => _.every(['UA', 'PSA', 'Revised', 'Spell-less', 'Revisited'], (term) => spellClass.indexOf(term) === -1))
+      .filter((spellClass) => _.every(['UA', 'PSA', 'Revised', 'Spell-less', 'Revisited'], (term) => !spellClass.includes(term)))
       .orderBy()
       .value();
   }
@@ -180,14 +182,27 @@ export const Spells = () => {
   }
 
   function filterSpell (spell, options) {
+    // Filter based on text input
+    if (options.spell) {
+      const textFilterMatch = spell?.name?.toLowerCase().includes(spellNameSearch.toLowerCase())
+      if (!textFilterMatch && spellNameSearch.length) {
+        return false;
+      } else if (textFilterMatch) {
+        // If we searched for a spell, display it. Even if it doesn't match our other filters.
+        return true;
+      }
+    }
+
     // Filter based on classes (comparing the spell's class list vs the selected classes)
     if (options.class) {
       const availableClassMatch = (
         _.some(spell?.classes?.fromClassList, (spellClass) => availableClasses.includes(spellClass.name)) ||
+        _.some(spell?.classes?.fromClassListVariant, (spellClass) => availableClasses.includes(spellClass.name)) ||
         _.some(spell?.classes?.fromSubclass, (spellSubclass) => availableClasses.includes(`${spellSubclass?.class?.name} (${spellSubclass?.subclass.name})`))
       );
       const selectedClassMatch = selectedClasses.length === 0 || (
         _.some(spell?.classes?.fromClassList, (spellClass) => selectedClasses.includes(spellClass.name)) ||
+        _.some(spell?.classes?.fromClassListVariant, (spellClass) => selectedClasses.includes(spellClass.name)) ||
         _.some(spell?.classes?.fromSubclass, (spellSubclass) => selectedClasses.includes(`${spellSubclass?.class?.name} (${spellSubclass?.subclass.name})`))
       );
       if (!availableClassMatch || !selectedClassMatch) {
@@ -204,6 +219,7 @@ export const Spells = () => {
       }
     }
 
+    // Filter based on spell school
     if (options.school) {
       const availableSchoolMatch = availableSpellSchools.includes(spell.school);
       const selectedSchoolMatch = selectedSpellSchools.length === 0 || selectedSpellSchools.includes(spell.school);
@@ -212,10 +228,18 @@ export const Spells = () => {
       }
     }
 
+    // Filter based on spell selection
     if (options.spell) {
       const availableSpellMatch = availableSpells.map((spell) => spell.name).includes(spell.name);
       const selectedSpellMatch = selectedSpells.length === 0 || selectedSpells.includes(spell.name);
       if (!availableSpellMatch || !selectedSpellMatch) {
+        return false;
+      }
+    }
+
+    // Filter based on ritual options
+    if (options.spell) {
+      if (ritualFilter !== spell?.meta?.ritual && ritualFilter !== null) {
         return false;
       }
     }
@@ -235,7 +259,7 @@ export const Spells = () => {
   return (
     <Page>
       <SearchContainer>
-        <SearchInput placeholder="Search by title" />
+        <SearchInput placeholder="Search by title" onChange={(e) => setSpellNameSearch(e?.target?.value)} />
         <Checkbox sizeFactor={2} style={{ margin: '5px 0px 0px 10px' }} contents={<FilterIcon />} defaultState={showFilters} onChange={(checked) => setShowFilters(checked)} />
       </SearchContainer>
       <FiltersContainer showFilters={showFilters}>
@@ -315,7 +339,7 @@ export const Spells = () => {
           .filter((spell) => filterSpell(spell, { class: true, level: true, school: true, spell: true }))
           .orderBy(['level', 'name'], ['asc', 'asc'])
           .map((spell) => (
-            <div>{spell.name}</div>
+            <SpellCard key={spell.name} spell={spell} />
           ))
           .value()
         }

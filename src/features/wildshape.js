@@ -111,7 +111,7 @@ const getAttackCount = (record) => {
       return numberWordToNumber(makesAttacksMatch); 
     } else {
       const numberWords = action?.entries?.[0]?.match(/(one|two|three)/);
-      const isAttack = action?.entries?.[0]?.indexOf("ft., one") !== -1;
+      const isAttack = action?.entries?.[0]?.includes("ft., one");
       if (numberWords && !isAttack) {
         return _.sum(numberWords.map(numberWordToNumber));
       } else {

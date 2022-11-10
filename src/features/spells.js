@@ -185,6 +185,7 @@ export const Spells = () => {
     // Filter based on text input
     if (options.spell) {
       const textFilterMatch = spell?.name?.toLowerCase().includes(spellNameSearch.toLowerCase())
+      console.log('textFilterMatch', textFilterMatch, spellNameSearch);
       if (!textFilterMatch && spellNameSearch.length) {
         return false;
       } else if (textFilterMatch && spellNameSearch.length) {
@@ -335,7 +336,7 @@ export const Spells = () => {
         </FilterContainer>
       </FiltersContainer>
       <SpellsContainer>
-        {_.chain(availableSpells)
+        {_.chain(allSpells)
           .filter((spell) => filterSpell(spell, { class: true, level: true, school: true, spell: true }))
           .orderBy(['level', 'name'], ['asc', 'asc'])
           .map((spell) => (

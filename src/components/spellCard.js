@@ -6,10 +6,12 @@ import _ from 'lodash';
 
 const SpellCardContainer = styled.div`
   margin-top: 10px;
+  width: 100%;
   border: 2px solid ${({ theme }) => theme.black};
   border-radius: 2px;
   padding: 10px;
   box-shadow: 2px 2px 0px ${({ theme }) => theme.shadowBlack};
+  box-sizing: border-box;
   background-color: ${({ theme }) => theme.tgtDarkBlue};
   * {
     font-family: 'Outfit', sans-serif;
@@ -78,14 +80,14 @@ export const SpellCard = ({ spell }) => (
   <SpellCardContainer>
     <SpellCardHeader>
       <div>
-        <a id={spell.name.toLowerCase().replaceAll(' ', '-')} href={`https://www.dndbeyond.com/spells/${spell.name.toLowerCase().replaceAll(' ', '-')}`} target="_blank" rel="noreferrer">
-          {spell.name}
+        <a id={spell?.name?.toLowerCase().replaceAll(' ', '-')} href={`https://www.dndbeyond.com/spells/${spell?.name?.toLowerCase().replaceAll(' ', '-')}`} target="_blank" rel="noreferrer">
+          {spell?.name}
         </a>
       </div>
       <div>
-        {spell.level === 0 ? `${spell.school} cantrip` : `${spell.level}${ordinalEnding(spell.level)} Level ${spell.school}`}
+        {spell?.level === 0 ? `${spell?.school} cantrip` : `${spell?.level}${ordinalEnding(spell?.level)} Level ${spell?.school}`}
         <br />
-        {spell.source}
+        {spell?.source}
       </div>
     </SpellCardHeader>
     <SpellCardMeta>

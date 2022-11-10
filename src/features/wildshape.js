@@ -3,33 +3,11 @@ import styled from 'styled-components';
 
 import Page from '../components/page';
 import Checkbox from '../components/checkbox';
-import Select from '../components/select';
 import OnlyAllNone from '../components/onlyAllNone';
+import { FilterRow, Filter, FilterHeader, Select } from '../components/styled';
 
-import { calculateStrokeTextShadow } from '../utils';
 import beasts from '../assets/beasts.json';
 import _ from 'lodash';
-
-const FilterRow = styled.div`
-  width: 600px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 20px;
-`;
-
-const Filter = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const FilterHeader = styled.div`
-  font-size: 24px;
-  line-height: 26px;
-  color: ${({ theme }) => theme.white};
-  text-shadow: ${({ theme }) => calculateStrokeTextShadow({ radius: 2, color: theme.black, shadow: true })};
-`;
 
 const FilterInputContainer = styled.div`
   display: flex;

@@ -188,7 +188,6 @@ export const Spells = () => {
     // Filter based on text input
     if (options.spell) {
       const textFilterMatch = spell?.name?.toLowerCase().includes(spellNameSearch.toLowerCase())
-      console.log('textFilterMatch', textFilterMatch, spellNameSearch);
       if (!textFilterMatch && spellNameSearch.length) {
         return false;
       } else if (textFilterMatch && spellNameSearch.length) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ordinalEnding } from '../utils';
+import { ordinalEnding, parse5eToolsTags } from '../utils';
 import _ from 'lodash';
 
 const SpellCardContainer = styled.div`
@@ -104,7 +104,7 @@ export const SpellCard = ({ spell }) => (
             <ul key={`spell-${spell?.name}-entry-${index}`}>
               {entry?.items?.map((item) => {
                 if (item?.type === 'item') {
-                  return <li key={item?.entries?.[0]}><SectionTitle>{item?.name}</SectionTitle> {item?.entries?.[0]}</li>;
+                  return <li key={item?.entries?.[0]}><SectionTitle>{item?.name}</SectionTitle>( {parse5eToolsTags(item?.entries?.[0])}</li>;
                 } else {
                   return <li key={item}>{item}</li>
                 }
@@ -114,7 +114,7 @@ export const SpellCard = ({ spell }) => (
         } else if (entry?.type === 'entries') {
           return <div key={`spell-${spell?.name}-entry-${index}`}>
             <SectionTitle>{entry?.name}.</SectionTitle>
-            <span>{entry?.entries[0]}</span>
+            <span>{parse5eToolsTags(entry?.entries?.[0])}</span>
           </div>;
         }
         else if (typeof entry === 'string') {
@@ -124,7 +124,7 @@ export const SpellCard = ({ spell }) => (
       {spell?.entriesHigherLevel?.[0] && (
         <div>
           <SectionTitle>At Higher Levels.</SectionTitle>
-          <span>{spell?.entriesHigherLevel?.[0]?.entries?.[0]}</span>
+          <span>{parse5eToolsTags(spell?.entriesHigherLevel?.[0]?.entries?.[0])}</span>
         </div>
       )}
     </SpellCardDescription>

@@ -48,7 +48,7 @@ const FilterContainer = styled.div`
   min-width: 120px;
   margin-bottom: 4px;
   border: 2px solid ${({ theme }) => theme.black};
-  background-color: ${({ theme }) => theme.tgtDarkBlue};
+  background-color: ${({ theme }) => theme.tgtBlue};
   box-shadow: 2px 2px 0px ${({ theme }) => theme.shadowBlack};
   & > div:first-child {
     display: flex;
@@ -108,6 +108,9 @@ const Option = styled.div`
   border-right: 2px solid ${({ theme }) => theme.black};
   &:nth-child(odd) {
     background-color: ${({ theme }) => theme.tgtBlue};
+  }
+  &:nth-child(even) {
+    background-color: ${({ theme }) => theme.tgtDarkBlue};
   }
   span {
     font-family: 'Outfit', sans-serif !important;

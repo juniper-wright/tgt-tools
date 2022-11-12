@@ -104,9 +104,9 @@ export const SpellCard = ({ spell }) => (
             <ul key={`spell-${spell?.name}-entry-${index}`}>
               {entry?.items?.map((item) => {
                 if (item?.type === 'item') {
-                  return <li key={item?.entries?.[0]}><SectionTitle>{item?.name}</SectionTitle>( {parse5eToolsTags(item?.entries?.[0])}</li>;
+                  return <li key={item?.entries?.[0]}><SectionTitle>{item?.name}.</SectionTitle> {parse5eToolsTags(item?.entries?.[0])}</li>;
                 } else {
-                  return <li key={item}>{item}</li>
+                  return <li key={item}>{parse5eToolsTags(item)}</li>
                 }
               })}
             </ul>
@@ -118,7 +118,7 @@ export const SpellCard = ({ spell }) => (
           </div>;
         }
         else if (typeof entry === 'string') {
-          return <div key={`spell-${spell?.name}-entry-${index}`}>{entry}</div>;
+          return <div key={`spell-${spell?.name}-entry-${index}`}>{parse5eToolsTags(entry)}</div>;
         }
       })}
       {spell?.entriesHigherLevel?.[0] && (

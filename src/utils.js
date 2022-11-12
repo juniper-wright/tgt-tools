@@ -26,37 +26,52 @@ export const ordinalEnding = (i) => {
 }
 
 export const parse5eToolsTags = (string) => {
-  const matches = string.match(/({@[^}]+})/g);
+  const matches = string.match(/{@[^}]+}/g);
   if (matches === null) {
     return string;
   } else {
     for (var match of matches) {
       switch (match.substring(2, match.indexOf(' '))) {
+        // A lot of tags are just {@tag name}, so we can just render those easily
         case 'damage':
         case 'dice':
-          string = string.replace(match, match.substring(match.indexOf(' '), match.length - 1));
-          console.log('string:', string)
-        // TODO: Handle all of these
-        case 'item':
-        case 'quickref':
         case 'condition':
-        case 'damage':
-        case 'dice':
-        case 'scaledamage':
-        case 'b':
-        case 'spell':
         case 'sense':
-        case 'creature':
         case 'action':
-        case 'filter':
-        case 'adventure':
-        case 'hit':
-        case 'chance':
-        case 'd20':
         case 'skill':
-        case 'scaledice':
+          string = string.replace(match, match.substring(match.indexOf(' ') + 1, match.length - 1));
+          break;
+
+        // Some tags have multiple arguments separated by a '|', but we only ever want the first one.
+        case 'filter':
         case 'book':
+          string = string.replace(match, match.substring(match.indexOf(' ') + 1, match.indexOf('|')));
+
+        // Handle {@tag entityName|data|humanReadableName}-type tags
+        // Only some have a third argument that specifies a human-readable string. Some don't need it so we go with the first argument.
+        case 'item':
+        case 'creature':
+        case 'scaledamage':
+        case 'scaledice':
+          const entityName = match.split('|')?.[2]?.slice(0, -1) || match.substring(match.indexOf(' ') + 1, match.indexOf('|'));
+          string = string.replace(match, entityName);
+          break;
+
+        // @quickref apparently has five arguments but sometimes we only want the first
+        case 'quickref':
+          const refName = match.split('|')?.[4]?.slice(0, -1) || match.substring(match.indexOf(' ') + 1, match.indexOf('|'));
+          string = string.replace(match, refName);
+          break;
+
+        // Spells are a special case because we need to render an <a> tag to link to the spell.
+        case 'spell':
+          // TODO: <a> tags are not rendering
+          const spellName = match.substring(match.indexOf(' ') + 1, match.length - 1);
+          string = string.replace(match, `<a href="#${spellName.replaceAll(' ', '-')}">${spellName}</a>`);
+          break;
+
         case 'note':
+          console.log('relevant match:', match)
         case 'classFeature':
         case 'race':
         case 'i':
@@ -65,6 +80,7 @@ export const parse5eToolsTags = (string) => {
         case 'dc':
         case 'recharge':
         case 'table':
+        case 'hit':
           break;
       }
     }

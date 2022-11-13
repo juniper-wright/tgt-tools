@@ -39,6 +39,7 @@ export const parse5eToolsTags = (string) => {
         case 'sense':
         case 'action':
         case 'skill':
+        case 'spell':
           string = string.replace(match, match.substring(match.indexOf(' ') + 1, match.length - 1));
           break;
 
@@ -49,11 +50,14 @@ export const parse5eToolsTags = (string) => {
 
         // Handle {@tag entityName|data|humanReadableName}-type tags
         // Only some have a third argument that specifies a human-readable string. Some don't need it so we go with the first argument.
+        // Creatures and races are annoyingly special because SOMETIMES they have multiple arguments
         case 'item':
-        case 'creature':
         case 'scaledamage':
         case 'scaledice':
-          const entityName = match.split('|')?.[2]?.slice(0, -1) || match.substring(match.indexOf(' ') + 1, match.indexOf('|'));
+        case 'creature':
+        case 'race':
+          const firstArgument = match.indexOf('|')
+          const entityName = match.split('|')?.[2]?.slice(0, -1) || match.substring(match.indexOf(' ') + 1, firstArgument === -1 ? match.length - 1 : firstArgument);
           string = string.replace(match, entityName);
           break;
 
@@ -63,23 +67,10 @@ export const parse5eToolsTags = (string) => {
           string = string.replace(match, refName);
           break;
 
-        // Spells are a special case because we need to render an <a> tag to link to the spell.
-        case 'spell':
-          // TODO: <a> tags are not rendering
-          const spellName = match.substring(match.indexOf(' ') + 1, match.length - 1);
-          string = string.replace(match, `<a href="#${spellName.replaceAll(' ', '-')}">${spellName}</a>`);
-          break;
-
-        case 'note':
-          console.log('relevant match:', match)
-        case 'classFeature':
-        case 'race':
-        case 'i':
+        // TODO: These are beast-statblock-specific tags; handle them if necessary
         case 'atk':
-        case 'h':
         case 'dc':
         case 'recharge':
-        case 'table':
         case 'hit':
           break;
       }

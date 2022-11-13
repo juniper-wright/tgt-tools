@@ -46,6 +46,14 @@ const SpellCardDescription = styled.div`
   }
   font-size: 16px;
   line-height: 20px;
+  table {
+    width: 100%;
+    th, td {
+      padding: 10px 0px;
+      min-width: 200px;
+      text-align: center;
+    }
+  }
 `;
 
 const SectionTitle = styled.span`
@@ -98,10 +106,10 @@ export const SpellCard = ({ spell }) => (
       <div>Classes: {renderClasses(spell)}</div>
     </SpellCardMeta>
     <SpellCardDescription>
-      {spell?.entries?.map((entry, index) => {
+      {spell?.entries?.map((entry, i) => {
         if (entry?.type === 'list') {
           return (
-            <ul key={`spell-${spell?.name}-entry-${index}`}>
+            <ul key={`spell-${spell?.name}-entry-${i}`}>
               {entry?.items?.map((item) => {
                 if (item?.type === 'item') {
                   return <li key={item?.entries?.[0]}><SectionTitle>{item?.name}.</SectionTitle> {parse5eToolsTags(item?.entries?.[0])}</li>;
@@ -112,13 +120,29 @@ export const SpellCard = ({ spell }) => (
             </ul>
           );
         } else if (entry?.type === 'entries') {
-          return <div key={`spell-${spell?.name}-entry-${index}`}>
+          return <div key={`spell-${spell?.name}-entry-${i}`}>
             <SectionTitle>{entry?.name}.</SectionTitle>
             <span>{parse5eToolsTags(entry?.entries?.[0])}</span>
           </div>;
-        }
-        else if (typeof entry === 'string') {
-          return <div key={`spell-${spell?.name}-entry-${index}`}>{parse5eToolsTags(entry)}</div>;
+        } else if (entry?.type === 'table') {
+          return (
+            <table>
+              <tr>
+                {entry?.colLabels.map((colLabel) => <th key={`${spell.name}-${colLabel}`}>{parse5eToolsTags(colLabel)}</th>)}
+              </tr>
+              {entry?.rows?.map((row, j) => (
+                <tr key={`${spell.name}-table-${i}-row-${j}`}>
+                  {row?.map((col, k) => (
+                    <td key={`${spell.name}-table-${i}-row-${j}-${k}`}>
+                      {col?.type === 'cell' ? (col?.roll?.exact || `${col?.roll?.min} - ${col?.roll?.max}`) : parse5eToolsTags(col)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+          );
+        } else if (typeof entry === 'string') {
+          return <div key={`spell-${spell?.name}-entry-${i}`}>{parse5eToolsTags(entry)}</div>;
         }
       })}
       {spell?.entriesHigherLevel?.[0] && (
